@@ -8,7 +8,18 @@ declare_id!("F7uwK9BXr7orrQWJujdoTVbd7P7yMDnPA84udYYyPPLM");
 pub mod rust_program_anchor {
     use super::*;
 
-    pub fn initialize(ctx: Context<InitializeMintAccount>,title: String, description: String, rating: u8) -> Result<()> {
+    pub fn initialize_mint_account(
+        ctx: Context<InitializeMintAccount>,
+        id: u64, 
+        description: String, 
+        owner: String,
+        creator: String,
+        authorize: bool,
+        url: String,
+        is_initialized: bool,
+        cid: String,
+        is_mutable: bool,
+    ) -> Result<()> {
         Ok(())
     }
 }
@@ -28,7 +39,7 @@ pub mod rust_program_anchor {
 pub struct InitializeMintAccount<'info> {
     #[account(
         init,
-        seeds = ["mint".as_bytes()],
+        seeds = [initializer.key().as_ref(),cid.as_bytes()],
         bump,
         payer = initializer,
         mint::decimals = 0,
@@ -37,6 +48,8 @@ pub struct InitializeMintAccount<'info> {
     pub mint: Account<'info, Mint>,
     #[account(
         init,
+        seeds = [mint.key().as_ref(),cid.as_bytes()],
+        bump,
         payer = initializer,
         space = 8 + 4 + description.len() + owner.len() + creator.len() + 4 + url.len() + 4 + cid.len() + 4,
     )]
